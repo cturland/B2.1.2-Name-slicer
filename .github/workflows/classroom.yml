@@ -1,1 +1,203 @@
+name: Autograding Tests – Name Slicer
+on:
+  - push
+  - workflow_dispatch
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 1) Normal case (example from sheet)
+    - name: "Test 1: Elephant"
+      id: t1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T1
+        command: python3 solution.py
+        input: |
+          Elephant
+        expected-output: |
+          Ele
+          nt
+          tnahpelE
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 2) Exactly 3 letters
+    - name: "Test 2: Cat"
+      id: t2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T2
+        command: python3 solution.py
+        input: |
+          Cat
+        expected-output: |
+          Cat
+          at
+          taC
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 3) Exactly 2 letters (edge rule for last 2)
+    - name: "Test 3: Hi"
+      id: t3
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T3
+        command: python3 solution.py
+        input: |
+          Hi
+        expected-output: |
+          Hi
+          Hi
+          iH
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 4) Single letter (edge rule for both)
+    - name: "Test 4: A"
+      id: t4
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T4
+        command: python3 solution.py
+        input: |
+          A
+        expected-output: |
+          A
+          A
+          A
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 5) Mixed capitalisation must be preserved
+    - name: "Test 5: aBcDe"
+      id: t5
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T5
+        command: python3 solution.py
+        input: |
+          aBcDe
+        expected-output: |
+          aBc
+          De
+          eDcBa
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 6) Standard longer word
+    - name: "Test 6: Python"
+      id: t6
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T6
+        command: python3 solution.py
+        input: |
+          Python
+        expected-output: |
+          Pyt
+          on
+          nohtyP
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 7) Short (<3 but >=2)
+    - name: "Test 7: Go"
+      id: t7
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T7
+        command: python3 solution.py
+        input: |
+          Go
+        expected-output: |
+          Go
+          Go
+          oG
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 8) Repeated letters, ensure slicing is positional
+    - name: "Test 8: Bananas"
+      id: t8
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T8
+        command: python3 solution.py
+        input: |
+          Bananas
+        expected-output: |
+          Ban
+          as
+          sananaB
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 9) Exactly 4 letters
+    - name: "Test 9: Code"
+      id: t9
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T9
+        command: python3 solution.py
+        input: |
+          Code
+        expected-output: |
+          Cod
+          de
+          edoC
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    # 10) All caps, check case handling
+    - name: "Test 10: SWIFT"
+      id: t10
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: NameSlicer T10
+        command: python3 solution.py
+        input: |
+          SWIFT
+        expected-output: |
+          SWI
+          FT
+          TFIWS
+        comparison-method: exact
+        timeout: 2
+        max-score: 1
+
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        T1_RESULTS: ${{ steps.t1.outputs.result }}
+        T2_RESULTS: ${{ steps.t2.outputs.result }}
+        T3_RESULTS: ${{ steps.t3.outputs.result }}
+        T4_RESULTS: ${{ steps.t4.outputs.result }}
+        T5_RESULTS: ${{ steps.t5.outputs.result }}
+        T6_RESULTS: ${{ steps.t6.outputs.result }}
+        T7_RESULTS: ${{ steps.t7.outputs.result }}
+        T8_RESULTS: ${{ steps.t8.outputs.result }}
+        T9_RESULTS: ${{ steps.t9.outputs.result }}
+        T10_RESULTS: ${{ steps.t10.outputs.result }}
+      with:
+        runners: t1,t2,t3,t4,t5,t6,t7,t8,t9,t10
 
