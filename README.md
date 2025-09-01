@@ -27,12 +27,3 @@ Ele
 nt
 tnahpelE
 </code></pre>
-
-<details>
-  <summary><strong>Hints</strong></summary>
-  <ul>
-    <li><code>s[:3]</code> → first 3</li>
-    <li><code>s[-2:]</code> → last 2</li>
-    <li><code>s[::-1]</code> → reverse</li>
-  </ul>
-</details>
